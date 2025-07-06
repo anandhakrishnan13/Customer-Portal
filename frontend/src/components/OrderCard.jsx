@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const OrderCard = ({ order, onEscalate, onCancel, onReturn }) => {
   const {
@@ -9,6 +10,17 @@ const OrderCard = ({ order, onEscalate, onCancel, onReturn }) => {
     expectedDelivery,
     orderId,
   } = order;
+const navigate = useNavigate();
+
+  const handleEscalateClick = () => {
+    navigate(`/escalate/${orderId}`);
+  };
+  const handleCancelClick = () =>{
+    navigate(`/cancel/${orderId}`);
+  }
+  const handleReturnClick = () =>{
+    navigate(`/return/${orderId}`);
+  }
 
   return (
     <div className="card mb-3 shadow-sm">
@@ -24,13 +36,13 @@ const OrderCard = ({ order, onEscalate, onCancel, onReturn }) => {
         )}
 
         <div className="d-flex gap-2">
-          <button className="btn btn-outline-warning btn-sm" onClick={() => onEscalate(orderId)}>
+          <button className="btn btn-outline-warning btn-sm" onClick={handleEscalateClick}>
             Escalate Issue
           </button>
-          <button className="btn btn-outline-danger btn-sm" onClick={() => onCancel(orderId)}>
+          <button className="btn btn-outline-danger btn-sm" onClick={handleCancelClick}>
             Request Cancellation
           </button>
-          <button className="btn btn-outline-success btn-sm" onClick={() => onReturn(orderId)}>
+          <button className="btn btn-outline-success btn-sm" onClick={handleReturnClick}>
             Request Return
           </button>
         </div>
