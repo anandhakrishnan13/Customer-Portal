@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import bcrypt from "bcryptjs"; // ✅ Add this
 import User from "../models/User.js";
 import Order from "../models/Order.js";
 import connectDB from "../config/db.js";
@@ -9,19 +10,18 @@ await connectDB();
 
 const seedData = async () => {
   try {
-    // Clear previous data
     await User.deleteMany();
     await Order.deleteMany();
 
-    // Create User
+    const hashedPassword = await bcrypt.hash("test1234", 10); // ✅ hash here
+
     const user = await User.create({
       name: "Anand Test",
       email: "anand@example.com",
       phone: "9999999999",
-      password: "test1234", // will be hashed automatically
+      password: hashedPassword, // ✅ securely stored
     });
 
-    // Create Orders
     await Order.create([
       {
         orderId: "ORD100001",
