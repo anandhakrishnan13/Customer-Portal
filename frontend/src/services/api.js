@@ -1,6 +1,6 @@
 // frontend/src/api/api.js
 // const API_BASE_URL = "http://localhost:5000/api";
-const API_BASE_URL = "https://customer-portal-a9hg.onrender.com"
+const API_BASE_URL = "https://customer-portal-a9hg.onrender.com/api"
 
 export const loginWithPassword = async (identifier, password) => {
   const res = await fetch(`${API_BASE_URL}/auth/login-password`, {
