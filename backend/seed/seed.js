@@ -9,7 +9,7 @@ await connectDB();
 
 const seedData = async () => {
   try {
-    // Clear previous
+    // Clear previous data
     await User.deleteMany();
     await Order.deleteMany();
 
@@ -31,6 +31,7 @@ const seedData = async () => {
         price: 999,
         dateOfOrder: new Date("2024-06-15"),
         expectedDelivery: new Date("2024-06-20"),
+        deliveredOn: new Date("2024-06-20"),
       },
       {
         orderId: "ORD100002",
@@ -41,7 +42,6 @@ const seedData = async () => {
         dateOfOrder: new Date("2024-07-01"),
         expectedDelivery: new Date("2024-07-06"),
       },
-      // ✅ NEW: Returned Order
       {
         orderId: "ORD100003",
         customer: user._id,
@@ -50,8 +50,9 @@ const seedData = async () => {
         price: 2999,
         dateOfOrder: new Date("2024-06-10"),
         expectedDelivery: new Date("2024-06-15"),
+        deliveredOn: new Date("2024-06-15"),
+        returnPickupDate: new Date("2024-06-20"),
       },
-      // ✅ NEW: Cancelled Order
       {
         orderId: "ORD100004",
         customer: user._id,

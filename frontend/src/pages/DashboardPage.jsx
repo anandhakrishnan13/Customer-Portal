@@ -21,19 +21,24 @@ const DashboardPage = () => {
   };
 
   useEffect(() => {
-    const loadOrders = async () => {
-      try {
-        const data = await fetchMyOrders();
-        setOrders(data);
-      } catch (err) {
-        setError("Failed to load orders. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadOrders = async () => {
+    try {
+      const data = await fetchMyOrders();
 
-    loadOrders();
-  }, []);
+      
+      const sorted = data.sort((a, b) => new Date(b.dateOfOrder) - new Date(a.dateOfOrder));
+      
+      setOrders(sorted);
+    } catch (err) {
+      setError("Failed to load orders. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadOrders();
+}, []);
+
 
   return (
     <>

@@ -1,38 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import mockOrders from '../data/mockOrders';
+import { fetchOrderById } from '../services/api'; // Make sure this exists
 
 const ReturnPage = () => {
   const { orderId } = useParams();
   const [reason, setReason] = useState('');
   const [otherReason, setOtherReason] = useState('');
+  const [productName, setProductName] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadOrder = async () => {
+      try {
+        const order = await fetchOrderById(orderId);
+        setProductName(order.productName);
+      } catch (err) {
+        setError('Failed to load order details.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadOrder();
+  }, [orderId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const finalReason = reason === 'other' ? otherReason : reason;
 
-    // Find order and get product name
-    const order = mockOrders.find((o) => o.orderId === orderId);
-    const productName = order ? order.productName : 'Unknown Product';
-
-    // Generate dummy tracking ID
     const trackingId = 'RTN-' + Math.floor(100000 + Math.random() * 900000);
-
-    // Simulate pickup date (+2 days)
     const pickupDate = new Date();
     pickupDate.setDate(pickupDate.getDate() + 2);
-    const formattedDate = pickupDate.toDateString();
 
-    // Navigate to summary
     navigate('/return-summary', {
       state: {
         orderId,
         productName,
         trackingId,
         reason: finalReason,
-        pickupDate: formattedDate,
+        pickupDate,
       },
     });
   };
@@ -54,6 +63,24 @@ const ReturnPage = () => {
     'other',
   ];
 
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="container mt-5 text-center">Loading...</div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <div className="container mt-5 text-danger text-center">{error}</div>
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar />
@@ -73,6 +100,7 @@ const ReturnPage = () => {
                   value={r}
                   checked={reason === r}
                   onChange={(e) => setReason(e.target.value)}
+                  required
                 />
                 <label className="form-check-label" htmlFor={`reason-${idx}`}>
                   {r === 'other' ? 'Other (please specify below)' : r}

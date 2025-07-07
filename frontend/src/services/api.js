@@ -10,6 +10,7 @@ export const loginWithPassword = async (identifier, password) => {
   if (!res.ok) throw new Error("Login failed");
   return res.json();
 };
+
 export const loginWithOrderId = async (identifier, orderId) => {
   const res = await fetch(`${API_BASE_URL}/auth/login-order`, {
     method: "POST",
@@ -22,7 +23,7 @@ export const loginWithOrderId = async (identifier, orderId) => {
 
 export const fetchMyOrders = async () => {
   const token = localStorage.getItem("token");
-
+  console.log("Using token:", token);
   const res = await fetch(`${API_BASE_URL}/orders/my-orders`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -30,6 +31,18 @@ export const fetchMyOrders = async () => {
   });
 
   if (!res.ok) throw new Error("Error fetching orders");
+  return res.json();
+};
+
+export const fetchOrderById = async (orderId) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Error fetching order by ID");
   return res.json();
 };
 

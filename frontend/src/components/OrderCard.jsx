@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const OrderCard = ({ order }) => {
   const {
@@ -15,6 +15,12 @@ const OrderCard = ({ order }) => {
 
   const navigate = useNavigate();
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "N/A";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-GB"); // ✅ dd/mm/yyyy
+  };
+
   const handleEscalateClick = () => {
     navigate(`/escalate/${orderId}`);
   };
@@ -27,9 +33,9 @@ const OrderCard = ({ order }) => {
     navigate(`/return/${orderId}`);
   };
 
-  const isDelivered = status === 'Delivered';
-  const isCancelled = status === 'Cancelled';
-  const isReturned = status === 'Returned';
+  const isDelivered = status === "Delivered";
+  const isCancelled = status === "Cancelled";
+  const isReturned = status === "Returned";
 
   return (
     <div className="card mb-3 shadow-sm">
@@ -39,26 +45,31 @@ const OrderCard = ({ order }) => {
 
         <p className="mb-1"><strong>Status:</strong> {status}</p>
         <p className="mb-1"><strong>Price:</strong> ₹{price}</p>
-        <p className="mb-1"><strong>Ordered On:</strong> {new Date(dateOfOrder).toLocaleDateString()}</p>
+        <p className="mb-1">
+          <strong>Ordered On:</strong> {formatDate(dateOfOrder)}
+        </p>
 
-        {isDelivered || isReturned ? (
-          <p className="mb-1">
-            <strong>Delivered On:</strong>{' '}
-            {new Date(deliveredOn || expectedDelivery).toLocaleDateString()}
-          </p>
-        ) : expectedDelivery && (
-          <p className="mb-1">
-            <strong>Expected Delivery:</strong>{' '}
-            {new Date(expectedDelivery).toLocaleDateString()}
-          </p>
-        )}
-
-        {isReturned && returnPickupDate && (
+        {isReturned ? (
+          <>
+            <p className="mb-1">
+              <strong>Delivered On:</strong>{" "}
+              {formatDate(deliveredOn)}
+            </p>
+            <p className="mb-3">
+              <strong>Return Pickup Date:</strong>{" "}
+              {returnPickupDate ? formatDate(returnPickupDate) : "Not scheduled"}
+            </p>
+          </>
+        ) : isDelivered ? (
           <p className="mb-3">
-            <strong>Return Pickup Date:</strong>{' '}
-            {new Date(returnPickupDate).toLocaleDateString()}
+            <strong>Delivered On:</strong>{" "}
+            {deliveredOn ? formatDate(deliveredOn) : formatDate(expectedDelivery)}
           </p>
-        )}
+        ) : expectedDelivery ? (
+          <p className="mb-3">
+            <strong>Expected Delivery:</strong> {formatDate(expectedDelivery)}
+          </p>
+        ) : null}
 
         <div className="d-flex gap-2">
           <button

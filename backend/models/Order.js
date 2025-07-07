@@ -9,6 +9,8 @@ const orderSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     dateOfOrder: { type: Date, required: true },
     expectedDelivery: { type: Date },
+    returnPickupDate: { type: Date },
+    deliveredOn: { type: Date },
   },
   { timestamps: true }
 );

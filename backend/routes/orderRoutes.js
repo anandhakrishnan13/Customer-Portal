@@ -4,8 +4,8 @@ import {
   escalateIssue,
   requestReturn,
   requestCancellation,
+  getOrderById,
 } from "../controllers/orderController.js";
-
 import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -21,5 +21,7 @@ router.post("/return/:orderId", protect, requestReturn);
 
 // 🔐 Request a cancellation
 router.post("/cancel/:orderId", protect, requestCancellation);
+
+router.get("/:orderId", protect, getOrderById);
 
 export default router;

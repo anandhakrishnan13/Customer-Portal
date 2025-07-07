@@ -3,9 +3,11 @@ import Order from "../models/Order.js";
 // 1️⃣ Get logged-in customer's orders
 export const getCustomerOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ customer: req.user._id });
+    console.log("🔐 Authenticated User:", req.user);
+    const orders = await Order.find({ customer: req.user._id }).lean();
     res.json(orders);
   } catch (err) {
+    console.error("❌ getCustomerOrders failed:", err);
     res.status(500).json({ message: "Error fetching orders", error: err.message });
   }
 };
@@ -67,5 +69,22 @@ export const requestCancellation = async (req, res) => {
     res.json({ message: "Order cancelled", reason });
   } catch (err) {
     res.status(500).json({ message: "Error cancelling order", error: err.message });
+  }
+};
+
+// 5️⃣ Get a single order by orderId
+export const getOrderById = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findOne({ orderId, customer: req.user._id });
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching order", error: err.message });
   }
 };

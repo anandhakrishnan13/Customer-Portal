@@ -1,13 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import mockOrders from "../data/mockOrders";
+import { fetchMyOrders } from "../services/api"; // ✅ using live data
 
 const EscalationSummaryPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const [order, setOrder] = useState(null);
 
-  if (!state || !state.orderId || !state.issue) {
+  const { orderId, issue } = state || {};
+
+  useEffect(() => {
+    const getOrderDetails = async () => {
+      try {
+        const orders = await fetchMyOrders();
+        const found = orders.find((o) => o.orderId === orderId);
+        setOrder(found || null);
+      } catch (err) {
+        console.error("Failed to fetch order:", err);
+      }
+    };
+
+    if (orderId) getOrderDetails();
+  }, [orderId]);
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "N/A";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-GB"); // dd/mm/yyyy
+  };
+
+  if (!orderId || !issue) {
     return (
       <div className="container mt-5">
         <h4>No escalation information found.</h4>
@@ -17,10 +40,6 @@ const EscalationSummaryPage = () => {
       </div>
     );
   }
-
-  const { orderId, issue } = state;
-  const order = mockOrders.find((o) => o.orderId === orderId);
-  const status = order ? order.status : "Unknown";
 
   return (
     <>
@@ -40,7 +59,11 @@ const EscalationSummaryPage = () => {
               </tr>
               <tr>
                 <th>Order Status</th>
-                <td>{status}</td>
+                <td>{order?.status || "Loading..."}</td>
+              </tr>
+              <tr>
+                <th>Escalated On</th>
+                <td>{formatDate(new Date())}</td>
               </tr>
             </tbody>
           </table>
