@@ -1,5 +1,5 @@
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,18 +7,39 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependency directory
+node_modules/
 
-# Editor directories and files
-.vscode/*
+# Build output
+build/
+dist/
+dist-ssr/
+out/ # for Next.js static export
+
+# Runtime data
+*.local
+.env
+.env.* # covers .env.development, .env.production, etc.
+
+# IDE / Editor folders
+.vscode/
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Optional: coverage and test output
+coverage/
+*.lcov
+
+# Optional: temporary cache folders
+.cache/
+.next/
+.temp/
