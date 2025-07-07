@@ -1,0 +1,21 @@
+.custom-control-input:not(:checked) ~ .custom-control-label::before {
+  background-color: blue; /* Change the background color of the toggle when it is not checked */
+  border-color: yellow; /* Change the border color of the checkbox when it is not checked */
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: red; /* Change the color of the toggle when it is checked */
+    border-color: green; /* Change the border color of the toggle when it is checked */
+}
+
+.checkbox-outside-card.custom-control-input:not(:checked) ~ .custom-control-label::after {
+  background-color: #fff; /* Change the background color of the radio button when it is checked */
+  border: 2px solid purple; /* Add a border if you prefer */
+}
+
+.checkbox-outside-card.custom-control-input:checked ~ .custom-control-label::after {
+  background-color: pink; /* Change the background color of the radio button when it is checked */
+  border: 2px solid violet; 
+  border-radius: 3px; /* Change the roundness */
+}
+

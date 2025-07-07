@@ -1,70 +1,108 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { loginWithPassword, loginWithOrderId } from "../services/api";
+import Navbar from "../components/Navbar";
+import './LoginPage.css';
 
 const LoginPage = () => {
-  const [emailOrPhone, setEmailOrPhone] = useState('');
-  const [passwordOrOrderId, setPasswordOrOrderId] = useState('');
-  const [loginMethod, setLoginMethod] = useState('password'); // 'password' or 'orderId'
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [orderId, setOrderId] = useState("");
+  const [useOrderId, setUseOrderId] = useState(false); // toggle
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Later: Send data to backend
-    console.log('Login Submitted:', { emailOrPhone, passwordOrOrderId, loginMethod });
+    setError("");
 
-    // Simulate successful login
-    navigate('/dashboard');
+    try {
+      let token, user;
+
+      if (useOrderId) {
+        const response = await loginWithOrderId(identifier, orderId);
+        token = response.token;
+        user = response.user;
+      } else {
+        const response = await loginWithPassword(identifier, password);
+        token = response.token;
+        user = response.user;
+      }
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Login failed. Please check your credentials.");
+    }
   };
 
   return (
-    <div className="row justify-content-center">
-      <div className="col-md-6">
-        <h2 className="text-center mb-4">Customer Login</h2>
+    <>
+      <Navbar />
+      <div className="container mt-5" style={{ maxWidth: "500px" }}>
+        <h3 className="mb-4">Customer Login</h3>
+
         <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
           <div className="mb-3">
             <label className="form-label">Email or Phone</label>
             <input
               type="text"
               className="form-control"
-              value={emailOrPhone}
-              onChange={(e) => setEmailOrPhone(e.target.value)}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               required
             />
           </div>
 
-          <div className="mb-3">
-            <label className="form-label">
-              {loginMethod === 'password' ? 'Password' : 'Order ID'}
-            </label>
-            <input
-              type={loginMethod === 'password' ? 'password' : 'text'}
-              className="form-control"
-              value={passwordOrOrderId}
-              onChange={(e) => setPasswordOrOrderId(e.target.value)}
-              required
-            />
-          </div>
+          {!useOrderId ? (
+            <div className="mb-3">
+              <label className="form-label">Password</label>
+              <input
+                type="password"
+                className="form-control"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+          ) : (
+            <div className="mb-3">
+              <label className="form-label">Order ID</label>
+              <input
+                type="text"
+                className="form-control"
+                value={orderId}
+                onChange={(e) => setOrderId(e.target.value)}
+                required
+              />
+            </div>
+          )}
 
-          <div className="mb-3 form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="toggleLogin"
-              onChange={() =>
-                setLoginMethod(loginMethod === 'password' ? 'orderId' : 'password')
-              }
-            />
-            <label className="form-check-label" htmlFor="toggleLogin">
-              Use {loginMethod === 'password' ? 'Order ID' : 'Password'} instead
-            </label>
-          </div>
+          {error && <div className="alert alert-danger">{error}</div>}
 
           <button type="submit" className="btn btn-primary w-100">
             Login
           </button>
+
+          <div className="form-check form-switch mt-3">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="toggleLoginMode"
+              checked={useOrderId}
+              onChange={() => setUseOrderId(!useOrderId)}
+            />
+            <label className="form-check-label" htmlFor="toggleLoginMode">
+              {useOrderId
+                ? "Switch to Password Login"
+                : "Switch to Order ID Login"}
+            </label>
+          </div>
         </form>
       </div>
-    </div>
+    </>
   );
 };
 
