@@ -1,34 +1,56 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { fetchMyOrders } from "../services/api"; // ✅ using live data
+import { fetchMyOrders } from "../services/api";
 
 const EscalationSummaryPage = () => {
   const { state } = useLocation();
+  const { orderId: paramOrderId } = useParams(); // ✅ get from URL
   const navigate = useNavigate();
-  const [order, setOrder] = useState(null);
 
-  const { orderId, issue } = state || {};
+  const [order, setOrder] = useState(null);
+  const [issue, setIssue] = useState(state?.issue || ""); // fallback
+  const [loading, setLoading] = useState(true);
+
+  const orderId = paramOrderId || state?.orderId;
 
   useEffect(() => {
     const getOrderDetails = async () => {
       try {
         const orders = await fetchMyOrders();
         const found = orders.find((o) => o.orderId === orderId);
-        setOrder(found || null);
+        if (found) {
+          setOrder(found);
+          if (!issue && found.escalation?.message) {
+            setIssue(found.escalation.message);
+          }
+        }
       } catch (err) {
         console.error("Failed to fetch order:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (orderId) getOrderDetails();
-  }, [orderId]);
+    if (orderId) {
+      getOrderDetails();
+    } else {
+      setLoading(false);
+    }
+  }, [orderId, issue]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-GB"); // dd/mm/yyyy
+    return new Date(dateStr).toLocaleDateString("en-GB");
   };
+
+  if (loading) {
+    return (
+      <div className="container mt-5">
+        <p>Loading escalation summary...</p>
+      </div>
+    );
+  }
 
   if (!orderId || !issue) {
     return (
@@ -59,14 +81,15 @@ const EscalationSummaryPage = () => {
               </tr>
               <tr>
                 <th>Order Status</th>
-                <td>{order?.status || "Loading..."}</td>
+                <td>{order?.status || "Unknown"}</td>
               </tr>
               <tr>
                 <th>Escalated On</th>
-                <td>{formatDate(new Date())}</td>
+                <td>{formatDate(order?.escalation?.date || new Date())}</td>
               </tr>
             </tbody>
           </table>
+
           <p className="mt-3 text-danger">
             Our customer service team will be contacting you shortly.
           </p>

@@ -13,16 +13,16 @@ import CancelSummaryPage from './pages/CancelSummaryPage';
 const App = () => {
   return (
     <Router>
-      <div className="container mt-4">
+      <div className="container mt-4" style={{backgroundColor: "blue", color: "white"}} >
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/escalate/:orderId" element={<EscalatePage />} />
           <Route path="/cancel/:orderId" element={<CancelPage/>}/>
           <Route path="/return/:orderId" element={<ReturnPage/>} />
-          <Route path="/return-summary" element={<ReturnSummaryPage />} />
-          <Route path="/escalation-summary" element={<EscalationSummaryPage />} />
-          <Route path="/cancel-summary" element={<CancelSummaryPage/>} />
+          <Route path="/return-summary/:orderId" element={<ReturnSummaryPage />} />
+          <Route path="/escalation-summary/:orderId" element={<EscalationSummaryPage />} />
+          <Route path="/cancel-summary/:orderId" element={<CancelSummaryPage/>} />
           
         </Routes>
       </div>

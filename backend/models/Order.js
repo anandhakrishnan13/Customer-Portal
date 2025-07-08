@@ -11,6 +11,19 @@ const orderSchema = new mongoose.Schema(
     expectedDelivery: { type: Date },
     returnPickupDate: { type: Date },
     deliveredOn: { type: Date },
+    escalation: { message: String, escalatedAt: {
+    type: Date,
+    default: Date.now,
+  },},
+    returnRequest: { reason: String, trackingId: String, pickupDate: Date, logisticsPartner: String, requestedAt: {
+    type: Date,
+    default: Date.now,
+  }, },
+    cancellationRequest: { reason: String, requestedAt: {
+    type: Date,
+    default: Date.now,
+  },}
+
   },
   { timestamps: true }
 );

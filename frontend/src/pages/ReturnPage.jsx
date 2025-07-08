@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { fetchOrderById } from '../services/api';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { fetchOrderById } from "../services/api";
+import { requestReturn } from "../services/api";
 
 const ReturnPage = () => {
   const { orderId } = useParams();
-  const [reason, setReason] = useState('');
-  const [otherReason, setOtherReason] = useState('');
-  const [productName, setProductName] = useState('');
+  const [reason, setReason] = useState("");
+  const [otherReason, setOtherReason] = useState("");
+  const [productName, setProductName] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,7 +19,7 @@ const ReturnPage = () => {
         const order = await fetchOrderById(orderId);
         setProductName(order.productName);
       } catch (err) {
-        setError('Failed to load order details.');
+        setError("Failed to load order details.");
         console.error(err);
       } finally {
         setLoading(false);
@@ -27,39 +28,43 @@ const ReturnPage = () => {
     loadOrder();
   }, [orderId]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const finalReason = reason === 'other' ? otherReason : reason;
-    const trackingId = 'RTN-' + Math.floor(100000 + Math.random() * 900000);
-    const pickupDate = new Date();
-    pickupDate.setDate(pickupDate.getDate() + 2);
+    const finalReason = reason === "other" ? otherReason : reason;
 
-    navigate('/return-summary', {
-      state: {
-        orderId,
-        productName,
-        trackingId,
-        reason: finalReason,
-        pickupDate,
-      },
-    });
+    try {
+      const res = await requestReturn(orderId, finalReason);
+
+      navigate(`/return-summary/${res.orderId}`, {
+        state: {
+          orderId: res.orderId,
+          productName,
+          trackingId: res.trackingId,
+          reason: res.reason,
+          pickupDate: new Date(res.pickupDate),
+        },
+      });
+    } catch (err) {
+      console.error("Return submission failed:", err);
+      alert("Failed to submit return request. Please try again.");
+    }
   };
 
   const reasons = [
-    'Received a damaged product.',
-    'Received a defective or non-working product.',
-    'Wrong product delivered.',
-    'Product quality is not as expected.',
-    'Product differs from the description.',
-    'Received a different size/color/model.',
-    'Product seal was broken.',
-    'Incomplete product/package received.',
-    'Used or previously opened item delivered.',
-    'No longer needed.',
-    'Changed my mind.',
-    'Ordered by mistake.',
-    'Found a better alternative elsewhere.',
-    'other',
+    "Received a damaged product.",
+    "Received a defective or non-working product.",
+    "Wrong product delivered.",
+    "Product quality is not as expected.",
+    "Product differs from the description.",
+    "Received a different size/color/model.",
+    "Product seal was broken.",
+    "Incomplete product/package received.",
+    "Used or previously opened item delivered.",
+    "No longer needed.",
+    "Changed my mind.",
+    "Ordered by mistake.",
+    "Found a better alternative elsewhere.",
+    "other",
   ];
 
   if (loading) {
@@ -86,11 +91,15 @@ const ReturnPage = () => {
       <div className="container mt-4">
         <div className="row justify-content-center">
           <div className="col-md-8">
-            <h3 className="mb-4 text-center">Request Return – Order ID: {orderId}</h3>
+            <h3 className="mb-4 text-center">
+              Request Return – Order ID: {orderId}
+            </h3>
 
             <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
               <div className="mb-3">
-                <label className="form-label fw-semibold">Select Reason for Return</label>
+                <label className="form-label fw-semibold">
+                  Select Reason for Return
+                </label>
                 <div className="d-flex flex-column gap-2">
                   {reasons.map((r, idx) => (
                     <div className="form-check" key={idx}>
@@ -104,14 +113,17 @@ const ReturnPage = () => {
                         onChange={(e) => setReason(e.target.value)}
                         required
                       />
-                      <label className="form-check-label" htmlFor={`reason-${idx}`}>
-                        {r === 'other' ? 'Other (please specify below)' : r}
+                      <label
+                        className="form-check-label"
+                        htmlFor={`reason-${idx}`}
+                      >
+                        {r === "other" ? "Other (please specify below)" : r}
                       </label>
                     </div>
                   ))}
                 </div>
 
-                {reason === 'other' && (
+                {reason === "other" && (
                   <input
                     type="text"
                     className="form-control mt-3"
@@ -127,7 +139,7 @@ const ReturnPage = () => {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate("/dashboard")}
                 >
                   Cancel
                 </button>

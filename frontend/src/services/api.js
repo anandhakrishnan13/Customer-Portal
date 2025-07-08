@@ -46,3 +46,50 @@ export const fetchOrderById = async (orderId) => {
   return res.json();
 };
 
+// Submit a return request
+export const requestReturn = async (orderId, reason) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE_URL}/api/orders/return/${orderId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ reason }),
+  });
+
+  if (!res.ok) throw new Error("Error submitting return request");
+  return res.json();
+};
+
+// Submit an escalation request
+export const escalateIssue = async (orderId, message) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE_URL}/api/orders/escalate/${orderId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ message }),
+  });
+
+  if (!res.ok) throw new Error("Error submitting escalation");
+  return res.json();
+};
+
+// Submit a cancellation request
+export const requestCancellation = async (orderId, reason) => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE_URL}/api/orders/cancel/${orderId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ reason }),
+  });
+
+  if (!res.ok) throw new Error("Error submitting cancellation request");
+  return res.json();
+};

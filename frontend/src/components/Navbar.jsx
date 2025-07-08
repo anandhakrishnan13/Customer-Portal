@@ -13,9 +13,9 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-light bg-light mb-4">
-      <div className="container">
-        <span className="navbar-brand">Customer Portal</span>
+    <nav className="navbar navbar-light bg-light mb-4" style={{ borderRadius: "12px" }}>
+      <div className="container-fluid" >
+        <span className="navbar-brand" >Customer Portal</span>
         {isLoggedIn && (
           <button className="btn btn-outline-danger" onClick={handleLogout}>
             Logout

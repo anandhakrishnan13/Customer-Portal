@@ -13,7 +13,11 @@ const seedData = async () => {
     await User.deleteMany();
     await Order.deleteMany();
 
-    // 🔸 Customer 1
+    // Helper to generate orderId with prefix and number
+    const generateOrderId = (prefix, num) =>
+      `${prefix}${num.toString().padStart(6, "0")}`;
+
+    // Customer 1
     const user1 = await User.create({
       name: "Anand Test",
       email: "anand@example.com",
@@ -23,147 +27,144 @@ const seedData = async () => {
 
     await Order.create([
       {
-        orderId: "ORD100001",
+        orderId: generateOrderId("ORD1", 1),
         customer: user1._id,
         productName: "Smart Foam Pillow",
         status: "Delivered",
         price: 999,
-        dateOfOrder: new Date("2024-06-15"),
-        expectedDelivery: new Date("2024-06-20"),
-        deliveredOn: new Date("2024-06-20"),
+        dateOfOrder: new Date("2024-05-10"),
+        expectedDelivery: new Date("2024-05-15"),
+        deliveredOn: new Date("2024-05-15"),
       },
       {
-        orderId: "ORD100002",
+        orderId: generateOrderId("ORD1", 2),
+        customer: user1._id,
+        productName: "Luxury Bamboo Bedsheet",
+        status: "Delivered",
+        price: 2999,
+        dateOfOrder: new Date("2024-05-20"),
+        expectedDelivery: new Date("2024-05-25"),
+        deliveredOn: new Date("2024-05-25"),
+      },
+      {
+        orderId: generateOrderId("ORD1", 3),
         customer: user1._id,
         productName: "Cooling Mattress",
         status: "Shipped",
         price: 4999,
-        dateOfOrder: new Date("2024-07-01"),
-        expectedDelivery: new Date("2024-07-06"),
+        dateOfOrder: new Date("2024-06-01"),
+        expectedDelivery: new Date("2024-06-06"),
       },
       {
-        orderId: "ORD100003",
-        customer: user1._id,
-        productName: "Luxury Bamboo Bedsheet",
-        status: "Returned",
-        price: 2999,
-        dateOfOrder: new Date("2024-06-10"),
-        expectedDelivery: new Date("2024-06-15"),
-        deliveredOn: new Date("2024-06-15"),
-        returnPickupDate: new Date("2024-06-20"),
-      },
-      {
-        orderId: "ORD100004",
+        orderId: generateOrderId("ORD1", 4),
         customer: user1._id,
         productName: "Ergo Neck Pillow",
-        status: "Cancelled",
+        status: "Shipped",
         price: 1299,
-        dateOfOrder: new Date("2024-05-20"),
-        expectedDelivery: new Date("2024-05-25"),
+        dateOfOrder: new Date("2024-06-05"),
+        expectedDelivery: new Date("2024-06-10"),
       },
     ]);
 
-    // 🔸 Customer 2
+    // Customer 2 - Akku
     const user2 = await User.create({
-      name: "Priya Sharma",
-      email: "priya@example.com",
+      name: "Akku",
+      email: "akku@example.com",
       phone: "8888888888",
-      password: "priya123",
+      password: "akku123",
     });
 
     await Order.create([
       {
-        orderId: "ORD200001",
+        orderId: generateOrderId("ORD2", 1),
         customer: user2._id,
         productName: "Memory Foam Mattress",
         status: "Delivered",
         price: 8999,
-        dateOfOrder: new Date("2024-06-18"),
-        expectedDelivery: new Date("2024-06-23"),
-        deliveredOn: new Date("2024-06-23"),
+        dateOfOrder: new Date("2024-05-12"),
+        expectedDelivery: new Date("2024-05-17"),
+        deliveredOn: new Date("2024-05-17"),
       },
       {
-        orderId: "ORD200002",
+        orderId: generateOrderId("ORD2", 2),
         customer: user2._id,
         productName: "Organic Cotton Pillow",
-        status: "Out for Delivery",
+        status: "Delivered",
         price: 799,
-        dateOfOrder: new Date("2024-07-03"),
-        expectedDelivery: new Date("2024-07-08"),
+        dateOfOrder: new Date("2024-05-22"),
+        expectedDelivery: new Date("2024-05-27"),
+        deliveredOn: new Date("2024-05-27"),
       },
       {
-        orderId: "ORD200003",
+        orderId: generateOrderId("ORD2", 3),
         customer: user2._id,
         productName: "Silk Bedsheet Set",
-        status: "Cancelled",
+        status: "Shipped",
         price: 3499,
-        dateOfOrder: new Date("2024-06-05"),
-        expectedDelivery: new Date("2024-06-10"),
+        dateOfOrder: new Date("2024-06-02"),
+        expectedDelivery: new Date("2024-06-07"),
       },
       {
-        orderId: "ORD200004",
+        orderId: generateOrderId("ORD2", 4),
         customer: user2._id,
         productName: "Cooling Gel Pillow",
-        status: "Returned",
+        status: "Shipped",
         price: 1199,
-        dateOfOrder: new Date("2024-05-15"),
-        expectedDelivery: new Date("2024-05-20"),
-        deliveredOn: new Date("2024-05-20"),
-        returnPickupDate: new Date("2024-05-24"),
+        dateOfOrder: new Date("2024-06-10"),
+        expectedDelivery: new Date("2024-06-15"),
       },
     ]);
 
-    // 🔸 Customer 3
+    // Customer 3 - Ak
     const user3 = await User.create({
-      name: "Ravi Kumar",
-      email: "ravi@example.com",
+      name: "Ak",
+      email: "ak@example.com",
       phone: "7777777777",
-      password: "ravi123",
+      password: "ak123",
     });
 
     await Order.create([
       {
-        orderId: "ORD300001",
+        orderId: generateOrderId("ORD3", 1),
         customer: user3._id,
         productName: "Travel Neck Pillow",
         status: "Delivered",
         price: 499,
-        dateOfOrder: new Date("2024-06-10"),
-        expectedDelivery: new Date("2024-06-15"),
-        deliveredOn: new Date("2024-06-15"),
+        dateOfOrder: new Date("2024-05-05"),
+        expectedDelivery: new Date("2024-05-10"),
+        deliveredOn: new Date("2024-05-10"),
       },
       {
-        orderId: "ORD300002",
+        orderId: generateOrderId("ORD3", 2),
+        customer: user3._id,
+        productName: "Anti-Allergy Pillow",
+        status: "Delivered",
+        price: 1299,
+        dateOfOrder: new Date("2024-05-15"),
+        expectedDelivery: new Date("2024-05-20"),
+        deliveredOn: new Date("2024-05-20"),
+      },
+      {
+        orderId: generateOrderId("ORD3", 3),
         customer: user3._id,
         productName: "Zero Gravity Mattress",
         status: "Shipped",
         price: 10999,
-        dateOfOrder: new Date("2024-07-02"),
-        expectedDelivery: new Date("2024-07-07"),
-      },
-      {
-        orderId: "ORD300003",
-        customer: user3._id,
-        productName: "Waterproof Mattress Protector",
-        status: "Cancelled",
-        price: 999,
-        dateOfOrder: new Date("2024-06-12"),
-        expectedDelivery: new Date("2024-06-17"),
-      },
-      {
-        orderId: "ORD300004",
-        customer: user3._id,
-        productName: "Anti-Allergy Pillow",
-        status: "Pending",
-        price: 1299,
         dateOfOrder: new Date("2024-06-01"),
         expectedDelivery: new Date("2024-06-06"),
-        deliveredOn: new Date("2024-06-06"),
-        returnPickupDate: new Date("2024-06-10"),
+      },
+      {
+        orderId: generateOrderId("ORD3", 4),
+        customer: user3._id,
+        productName: "Waterproof Mattress Protector",
+        status: "Shipped",
+        price: 999,
+        dateOfOrder: new Date("2024-06-08"),
+        expectedDelivery: new Date("2024-06-13"),
       },
     ]);
 
-    console.log("✅ Seeded 3 users and 12 orders successfully");
+    console.log("✅ Seeded 3 users with updated names and orders");
     process.exit();
   } catch (err) {
     console.error("❌ Seeder failed:", err.message);

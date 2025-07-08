@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { escalateIssue } from "../services/api";
 
 const EscalatePage = () => {
   const { orderId } = useParams();
@@ -8,17 +9,25 @@ const EscalatePage = () => {
   const [otherIssue, setOtherIssue] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const finalIssue = reason === "other" ? otherIssue : reason;
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  const finalIssue = reason === "other" ? otherIssue : reason;
 
-    navigate("/escalation-summary", {
+  try {
+    await escalateIssue(orderId, finalIssue);
+
+    navigate(`/escalation-summary/${orderId}`,{
       state: {
         orderId,
         issue: finalIssue,
       },
     });
-  };
+  } catch (err) {
+    console.error("Escalation failed:", err);
+    alert("Failed to submit escalation. Please try again.");
+  }
+};
+
 
   const issues = [
     "Delay in refund for canceled or failed orders",

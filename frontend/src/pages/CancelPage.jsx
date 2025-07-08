@@ -1,36 +1,44 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { requestCancellation } from "../services/api";
+import Navbar from "../components/Navbar";
 
 const CancelPage = () => {
   const { orderId } = useParams();
-  const [reason, setReason] = useState('');
-  const [otherReason, setOtherReason] = useState('');
+  const [reason, setReason] = useState("");
+  const [otherReason, setOtherReason] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const finalReason = reason === 'other' ? otherReason : reason;
+    const finalReason = reason === "other" ? otherReason : reason;
 
-    navigate('/cancel-summary', {
-      state: {
-        orderId,
-        reason: finalReason,
-        cancellationDate: new Date().toISOString(),
-      },
-    });
+    try {
+      await requestCancellation(orderId, finalReason);
+
+      navigate(`/cancel-summary/${orderId}`, {
+        state: {
+          orderId,
+          reason: finalReason,
+          cancellationDate: new Date().toISOString(),
+        },
+      });
+    } catch (err) {
+      console.error("Cancellation failed:", err);
+      alert("Failed to cancel the order. Please try again.");
+    }
   };
 
   const cancelReasons = [
-    'Ordered by mistake',
-    'Found a better price elsewhere',
-    'No longer needed',
-    'Ordered wrong item (size, color, model)',
-    'Expected delivery date is too late',
-    'Changed my mind',
-    'Placing a new order with updated details',
-    'Accidental duplicate order',
-    'other',
+    "Ordered by mistake",
+    "Found a better price elsewhere",
+    "No longer needed",
+    "Ordered wrong item (size, color, model)",
+    "Expected delivery date is too late",
+    "Changed my mind",
+    "Placing a new order with updated details",
+    "Accidental duplicate order",
+    "other",
   ];
 
   return (
@@ -39,11 +47,15 @@ const CancelPage = () => {
       <div className="container mt-4">
         <div className="row justify-content-center">
           <div className="col-md-8">
-            <h3 className="mb-4 text-center">Request Cancellation – Order ID: {orderId}</h3>
+            <h3 className="mb-4 text-center">
+              Request Cancellation – Order ID: {orderId}
+            </h3>
 
             <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
               <div className="mb-3">
-                <label className="form-label fw-semibold">Reason for Cancellation</label>
+                <label className="form-label fw-semibold">
+                  Reason for Cancellation
+                </label>
                 <div className="d-flex flex-column gap-2">
                   {cancelReasons.map((r, idx) => (
                     <div key={idx} className="form-check">
@@ -57,14 +69,17 @@ const CancelPage = () => {
                         checked={reason === r}
                         required
                       />
-                      <label className="form-check-label" htmlFor={`cancel-option-${idx}`}>
-                        {r === 'other' ? 'Other (please specify below)' : r}
+                      <label
+                        className="form-check-label"
+                        htmlFor={`cancel-option-${idx}`}
+                      >
+                        {r === "other" ? "Other (please specify below)" : r}
                       </label>
                     </div>
                   ))}
                 </div>
 
-                {reason === 'other' && (
+                {reason === "other" && (
                   <input
                     type="text"
                     className="form-control mt-3"
@@ -80,7 +95,7 @@ const CancelPage = () => {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate("/dashboard")}
                 >
                   Cancel
                 </button>

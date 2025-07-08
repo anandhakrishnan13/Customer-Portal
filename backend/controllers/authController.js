@@ -36,7 +36,7 @@ export const loginWithOrderId = async (req, res) => {
   const { identifier, orderId } = req.body;
 
   try {
-    const user = await  User.findOne({
+    const user = await User.findOne({
       $or: [{ email: identifier }, { phone: identifier }],
     });
 
@@ -48,10 +48,19 @@ export const loginWithOrderId = async (req, res) => {
     if (!order)
       return res.status(401).json({ message: "Invalid order ID for this user" });
 
-    const token = generateToken(user._id);
-    res.json({ token, user });
+    // ✅ Generate token tied to orderId, not user._id
+    const token = jwt.sign(
+      { orderId: order.orderId, guest: true },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      token,
+      message: "Login successful via order ID",
+    });
   } catch (err) {
-    console.error("❌ loginWithOrderId failed:", err.message);
+    console.error("loginWithOrderId failed:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
