@@ -35,54 +35,60 @@ const EscalatePage = () => {
   return (
     <>
       <Navbar />
-      <div className="container">
-        <h3 className="mb-4">Escalate Issue – Order ID: {orderId}</h3>
+      <div className="container mt-4">
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <h3 className="mb-4 text-center">Escalate Issue – Order ID: {orderId}</h3>
 
-        <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
-          <div className="mb-3">
-            <label className="form-label">Select your issue</label>
-            {issues.map((r, idx) => (
-              <div key={idx} className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="issue"
-                  id={`issue-option-${idx}`}
-                  value={r}
-                  onChange={() => setReason(r)}
-                  checked={reason === r}
-                />
-                <label className="form-check-label" htmlFor={`issue-option-${idx}`}>
-                  {r === "other" ? "Other (please specify below)" : r}
-                </label>
+            <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Select your issue</label>
+                <div className="d-flex flex-column gap-2">
+                  {issues.map((r, idx) => (
+                    <div key={idx} className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="issue"
+                        id={`issue-option-${idx}`}
+                        value={r}
+                        onChange={() => setReason(r)}
+                        checked={reason === r}
+                      />
+                      <label className="form-check-label" htmlFor={`issue-option-${idx}`}>
+                        {r === "other" ? "Other (please specify below)" : r}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {reason === "other" && (
+                  <input
+                    type="text"
+                    className="form-control mt-3"
+                    placeholder="Please specify your reason"
+                    value={otherIssue}
+                    onChange={(e) => setOtherIssue(e.target.value)}
+                    required
+                  />
+                )}
               </div>
-            ))}
 
-            {reason === "other" && (
-              <input
-                type="text"
-                className="form-control mt-2"
-                placeholder="Please specify your reason"
-                value={otherIssue}
-                onChange={(e) => setOtherIssue(e.target.value)}
-                required
-              />
-            )}
+              <div className="d-flex gap-3">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-warning">
+                  Submit Escalation
+                </button>
+              </div>
+            </form>
           </div>
-
-          <div className="d-flex justify-content-between">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => navigate("/dashboard")}
-            >
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-warning">
-              Submit Escalation
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </>
   );

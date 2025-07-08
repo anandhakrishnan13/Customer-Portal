@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { FaUndo, FaExclamationTriangle, FaTimes } from "react-icons/fa";
 
 const OrderCard = ({ order }) => {
   const {
@@ -17,85 +18,89 @@ const OrderCard = ({ order }) => {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-GB"); // ✅ dd/mm/yyyy
+    return new Date(dateStr).toLocaleDateString("en-GB");
   };
 
-  const handleEscalateClick = () => {
-    navigate(`/escalate/${orderId}`);
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "Delivered":
+        return "success";
+      case "Cancelled":
+        return "secondary";
+      case "Returned":
+        return "info";
+      case "Shipped":
+        return "primary";
+      case "Processing":
+        return "warning";
+      default:
+        return "dark";
+    }
   };
-
-  const handleCancelClick = () => {
-    navigate(`/cancel/${orderId}`);
-  };
-
-  const handleReturnClick = () => {
-    navigate(`/return/${orderId}`);
-  };
-
-  const isDelivered = status === "Delivered";
-  const isCancelled = status === "Cancelled";
-  const isReturned = status === "Returned";
 
   return (
-    <div className="card mb-3 shadow-sm">
-      <div className="card-body">
-        <h5 className="card-title">{productName}</h5>
-        <h6 className="card-subtitle mb-2 text-muted">Order ID: {orderId}</h6>
+    <div className="row justify-content-center">
+      <div className="col-md-8">
+        <div className="card mb-4 shadow-sm border-0">
+          <div className="card-body">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h5 className="mb-0">{productName}</h5>
+              <span
+                className={`badge bg-${getStatusBadge(status)} rounded-pill px-3 py-2`}
+                style={{ fontSize: "0.9rem" }}
+              >
+                {status}
+              </span>
+            </div>
 
-        <p className="mb-1"><strong>Status:</strong> {status}</p>
-        <p className="mb-1"><strong>Price:</strong> ₹{price}</p>
-        <p className="mb-1">
-          <strong>Ordered On:</strong> {formatDate(dateOfOrder)}
-        </p>
+            <p className="mb-1"><strong>Order ID:</strong> {orderId}</p>
+            <p className="mb-1"><strong>Price:</strong> ₹{price}</p>
+            <p className="mb-1"><strong>Ordered On:</strong> {formatDate(dateOfOrder)}</p>
 
-        {isReturned ? (
-          <>
-            <p className="mb-1">
-              <strong>Delivered On:</strong>{" "}
-              {formatDate(deliveredOn)}
-            </p>
-            <p className="mb-3">
-              <strong>Return Pickup Date:</strong>{" "}
-              {returnPickupDate ? formatDate(returnPickupDate) : "Not scheduled"}
-            </p>
-          </>
-        ) : isDelivered ? (
-          <p className="mb-3">
-            <strong>Delivered On:</strong>{" "}
-            {deliveredOn ? formatDate(deliveredOn) : formatDate(expectedDelivery)}
-          </p>
-        ) : expectedDelivery ? (
-          <p className="mb-3">
-            <strong>Expected Delivery:</strong> {formatDate(expectedDelivery)}
-          </p>
-        ) : null}
+            {status === "Returned" && (
+              <>
+                <p className="mb-1"><strong>Delivered On:</strong> {formatDate(deliveredOn)}</p>
+                <p className="mb-1"><strong>Return Pickup:</strong> {formatDate(returnPickupDate)}</p>
+              </>
+            )}
 
-        <div className="d-flex gap-2">
-          <button
-            className="btn btn-outline-warning btn-sm"
-            onClick={handleEscalateClick}
-          >
-            Escalate Issue
-          </button>
+            {status === "Delivered" && (
+              <p className="mb-1"><strong>Delivered On:</strong> {formatDate(deliveredOn)}</p>
+            )}
 
-          {!isDelivered && !isReturned && !isCancelled && (
-            <button
-              className="btn btn-outline-danger btn-sm"
-              onClick={handleCancelClick}
-            >
-              Request Cancellation
-            </button>
-          )}
+            {!["Delivered", "Returned", "Cancelled"].includes(status) && expectedDelivery && (
+              <p className="mb-1"><strong>Expected Delivery:</strong> {formatDate(expectedDelivery)}</p>
+            )}
 
-          {isDelivered && (
-            <button
-              className="btn btn-outline-success btn-sm"
-              onClick={handleReturnClick}
-            >
-              Request Return
-            </button>
-          )}
+            <hr />
+
+            <div className="d-flex flex-wrap gap-3">
+              <button
+                className="btn btn-warning btn-sm d-flex align-items-center gap-1"
+                onClick={() => navigate(`/escalate/${orderId}`)}
+              >
+                <FaExclamationTriangle /> Escalate
+              </button>
+
+              {status === "Delivered" && (
+                <button
+                  className="btn btn-success btn-sm d-flex align-items-center gap-1"
+                  onClick={() => navigate(`/return/${orderId}`)}
+                >
+                  <FaUndo /> Return
+                </button>
+              )}
+
+              {!["Delivered", "Returned", "Cancelled"].includes(status) && (
+                <button
+                  className="btn btn-danger btn-sm d-flex align-items-center gap-1"
+                  onClick={() => navigate(`/cancel/${orderId}`)}
+                >
+                  <FaTimes /> Cancel
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

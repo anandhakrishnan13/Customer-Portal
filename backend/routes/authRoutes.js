@@ -7,6 +7,6 @@ import {
 const router = express.Router();
 
 router.post("/login-password", loginWithPassword);
-router.post("/login-orderid", loginWithOrderId);
+router.post("/login-order", loginWithOrderId);
 
 export default router;

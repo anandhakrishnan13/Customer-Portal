@@ -5,7 +5,7 @@ const orderSchema = new mongoose.Schema(
     orderId: { type: String, required: true, unique: true },
     customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
     productName: { type: String, required: true },
-    status: { type: String, enum: ["Pending", "Shipped", "Delivered", "Cancelled", "Returned"], default: "Pending" },
+    status: { type: String, enum: ["Pending", "Shipped", "Delivered", "Cancelled", "Out for Delivery", "Returned"], default: "Pending" },
     price: { type: Number, required: true },
     dateOfOrder: { type: Date, required: true },
     expectedDelivery: { type: Date },

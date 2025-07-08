@@ -7,6 +7,7 @@ import CancelPage from './pages/CancelPage';
 import ReturnPage from './pages/ReturnPage';
 import ReturnSummaryPage from "./pages/ReturnSummaryPage";
 import EscalationSummaryPage from "./pages/EscalationSummaryPage";
+import CancelSummaryPage from './pages/CancelSummaryPage';
 
 
 const App = () => {
@@ -21,6 +22,8 @@ const App = () => {
           <Route path="/return/:orderId" element={<ReturnPage/>} />
           <Route path="/return-summary" element={<ReturnSummaryPage />} />
           <Route path="/escalation-summary" element={<EscalationSummaryPage />} />
+          <Route path="/cancel-summary" element={<CancelSummaryPage/>} />
+          
         </Routes>
       </div>
     </Router>

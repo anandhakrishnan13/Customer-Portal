@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { fetchOrderById } from '../services/api'; // Make sure this exists
+import { fetchOrderById } from '../services/api';
 
 const ReturnPage = () => {
   const { orderId } = useParams();
@@ -30,7 +30,6 @@ const ReturnPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const finalReason = reason === 'other' ? otherReason : reason;
-
     const trackingId = 'RTN-' + Math.floor(100000 + Math.random() * 900000);
     const pickupDate = new Date();
     pickupDate.setDate(pickupDate.getDate() + 2);
@@ -84,55 +83,61 @@ const ReturnPage = () => {
   return (
     <>
       <Navbar />
-      <div className="container">
-        <h3 className="mb-4">Request Return – Order ID: {orderId}</h3>
+      <div className="container mt-4">
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <h3 className="mb-4 text-center">Request Return – Order ID: {orderId}</h3>
 
-        <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
-          <div className="mb-3">
-            <label className="form-label">Select Reason for Return</label>
-            {reasons.map((r, idx) => (
-              <div className="form-check" key={idx}>
-                <input
-                  type="radio"
-                  className="form-check-input"
-                  id={`reason-${idx}`}
-                  name="returnReason"
-                  value={r}
-                  checked={reason === r}
-                  onChange={(e) => setReason(e.target.value)}
-                  required
-                />
-                <label className="form-check-label" htmlFor={`reason-${idx}`}>
-                  {r === 'other' ? 'Other (please specify below)' : r}
-                </label>
+            <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Select Reason for Return</label>
+                <div className="d-flex flex-column gap-2">
+                  {reasons.map((r, idx) => (
+                    <div className="form-check" key={idx}>
+                      <input
+                        type="radio"
+                        className="form-check-input"
+                        id={`reason-${idx}`}
+                        name="returnReason"
+                        value={r}
+                        checked={reason === r}
+                        onChange={(e) => setReason(e.target.value)}
+                        required
+                      />
+                      <label className="form-check-label" htmlFor={`reason-${idx}`}>
+                        {r === 'other' ? 'Other (please specify below)' : r}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {reason === 'other' && (
+                  <input
+                    type="text"
+                    className="form-control mt-3"
+                    placeholder="Please specify your reason"
+                    value={otherReason}
+                    onChange={(e) => setOtherReason(e.target.value)}
+                    required
+                  />
+                )}
               </div>
-            ))}
 
-            {reason === 'other' && (
-              <input
-                type="text"
-                className="form-control mt-2"
-                placeholder="Please specify your reason"
-                value={otherReason}
-                onChange={(e) => setOtherReason(e.target.value)}
-                required
-              />
-            )}
+              <div className="d-flex gap-3">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-success">
+                  Confirm Return
+                </button>
+              </div>
+            </form>
           </div>
-
-          <div className="d-flex justify-content-between">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => navigate('/dashboard')}
-            >
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-success">
-              Confirm Return
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </>
   );

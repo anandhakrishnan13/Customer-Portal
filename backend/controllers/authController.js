@@ -36,7 +36,7 @@ export const loginWithOrderId = async (req, res) => {
   const { identifier, orderId } = req.body;
 
   try {
-    const user = await Customer.findOne({
+    const user = await  User.findOne({
       $or: [{ email: identifier }, { phone: identifier }],
     });
 
@@ -51,6 +51,7 @@ export const loginWithOrderId = async (req, res) => {
     const token = generateToken(user._id);
     res.json({ token, user });
   } catch (err) {
+    console.error("❌ loginWithOrderId failed:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };

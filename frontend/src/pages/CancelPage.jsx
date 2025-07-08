@@ -11,8 +11,14 @@ const CancelPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const finalReason = reason === 'other' ? otherReason : reason;
-    alert(`Cancellation requested for Order ID: ${orderId}\nReason: ${finalReason}`);
-    navigate('/dashboard');
+
+    navigate('/cancel-summary', {
+      state: {
+        orderId,
+        reason: finalReason,
+        cancellationDate: new Date().toISOString(),
+      },
+    });
   };
 
   const cancelReasons = [
@@ -24,60 +30,67 @@ const CancelPage = () => {
     'Changed my mind',
     'Placing a new order with updated details',
     'Accidental duplicate order',
-    'other'
+    'other',
   ];
 
   return (
     <>
       <Navbar />
-      <div className="container">
-        <h3 className="mb-4">Request Cancellation – Order ID: {orderId}</h3>
+      <div className="container mt-4">
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <h3 className="mb-4 text-center">Request Cancellation – Order ID: {orderId}</h3>
 
-        <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
-          <div className="mb-3">
-            <label className="form-label">Reason for Cancellation</label>
-            {cancelReasons.map((r, idx) => (
-              <div key={idx} className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="reason"
-                  id={`cancel-option-${idx}`}
-                  value={r}
-                  onChange={() => setReason(r)}
-                  checked={reason === r}
-                />
-                <label className="form-check-label" htmlFor={`cancel-option-${idx}`}>
-                  {r === 'other' ? 'Other (please specify below)' : r}
-                </label>
+            <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Reason for Cancellation</label>
+                <div className="d-flex flex-column gap-2">
+                  {cancelReasons.map((r, idx) => (
+                    <div key={idx} className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="reason"
+                        id={`cancel-option-${idx}`}
+                        value={r}
+                        onChange={() => setReason(r)}
+                        checked={reason === r}
+                        required
+                      />
+                      <label className="form-check-label" htmlFor={`cancel-option-${idx}`}>
+                        {r === 'other' ? 'Other (please specify below)' : r}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {reason === 'other' && (
+                  <input
+                    type="text"
+                    className="form-control mt-3"
+                    placeholder="Please specify your reason"
+                    value={otherReason}
+                    onChange={(e) => setOtherReason(e.target.value)}
+                    required
+                  />
+                )}
               </div>
-            ))}
 
-            {reason === 'other' && (
-              <input
-                type="text"
-                className="form-control mt-2"
-                placeholder="Please specify your reason"
-                value={otherReason}
-                onChange={(e) => setOtherReason(e.target.value)}
-                required
-              />
-            )}
+              <div className="d-flex gap-3">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-danger">
+                  Confirm Cancellation
+                </button>
+              </div>
+            </form>
           </div>
-
-          <div className="d-flex justify-content-between">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => navigate('/dashboard')}
-            >
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-danger">
-              Confirm Cancellation
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </>
   );
